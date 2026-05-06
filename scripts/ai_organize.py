@@ -41,6 +41,7 @@ def get_base_url(provider: str) -> str:
         "openai": "https://api.openai.com/v1",
         "claude": "https://api.anthropic.com/v1",
         "gemini": "https://generativelanguage.googleapis.com/v1beta",
+        "openrouter": "https://openrouter.ai/api/v1",
     }
     custom = os.environ.get("KB_AI_BASE_URL")
     return custom or urls.get(provider, urls["openai"])

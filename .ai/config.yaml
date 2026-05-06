@@ -1,8 +1,8 @@
-provider: gemini
+provider: openrouter
 models:
-  summarize: gemini-2.0-flash
-  tag: gemini-2.0-flash
-  link_suggest: gemini-2.0-flash
+  summarize: nvidia/nemotron-3-super-120b-a12b:free
+  tag: nvidia/nemotron-3-super-120b-a12b:free
+  link_suggest: nvidia/nemotron-3-super-120b-a12b:free
 
 prompts:
   summarize: "为以下笔记生成一句话中文摘要，只返回摘要文本："

@@ -33,10 +33,32 @@ export default {
 
     const contentIndex = await indexResp.json();
 
-    const keywords = question
+    // Split into keywords: handle CJK by extracting 2-char bigrams
+    const raw = question
       .toLowerCase()
       .split(/[\s,，。？?!！、]+/)
       .filter((w) => w.length > 1);
+    const cjkRe = /[\u4e00-\u9fff\u3400-\u4dbf]/;
+    const keywords = [];
+    for (const w of raw) {
+      if (cjkRe.test(w)) {
+        // Extract all 2-char CJK bigrams + any non-CJK tokens
+        const chars = [...w];
+        for (let i = 0; i < chars.length - 1; i++) {
+          if (cjkRe.test(chars[i]) && cjkRe.test(chars[i + 1])) {
+            keywords.push(chars[i] + chars[i + 1]);
+          }
+        }
+        // Also keep longer CJK substrings (3+ chars) if present
+        const cjkMatches = w.match(/[\u4e00-\u9fff\u3400-\u4dbf]{3,}/g);
+        if (cjkMatches) keywords.push(...cjkMatches);
+        // Keep non-CJK parts (e.g. "c++")
+        const nonCjk = w.replace(/[\u4e00-\u9fff\u3400-\u4dbf]+/g, " ").trim().split(/\s+/).filter((s) => s.length > 1);
+        keywords.push(...nonCjk);
+      } else {
+        keywords.push(w);
+      }
+    }
 
     const scored = Object.entries(contentIndex)
       .map(([slug, entry]) => {

@@ -1,0 +1,5 @@
+{
+  "buildCommand": "cd .quartz && npx quartz build -d ../content",
+  "outputDirectory": ".quartz/public",
+  "installCommand": "cd .quartz && npm install"
+}

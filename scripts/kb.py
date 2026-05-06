@@ -148,6 +148,12 @@ def cmd_preview(args):
         print("\n已停止")
 
 
+def cmd_ask(args):
+    load_env()
+    script = KB_DIR / "scripts" / "kb_ask.py"
+    subprocess.run([sys.executable, str(script)] + args, cwd=KB_DIR)
+
+
 def main():
     commands = {
         "new": cmd_new,
@@ -158,6 +164,7 @@ def main():
         "status": cmd_status,
         "setup": cmd_setup,
         "preview": cmd_preview,
+        "ask": cmd_ask,
     }
 
     if len(sys.argv) < 2 or sys.argv[1] not in commands:
@@ -170,6 +177,7 @@ def main():
   preview        本地预览 wiki 站点
   ai [文件]      运行 AI 整理
   apply          应用所有 AI 建议
+  ask <问题>     基于笔记内容的 AI 问答
   status         查看状态
   setup          初始化环境（含 Quartz）
 
@@ -183,6 +191,7 @@ def main():
   kb ai                                AI 整理所有最近变更的笔记
   kb apply                             将 AI 建议写入笔记的 frontmatter
   kb status                            查看有多少 AI 建议待确认 + git 状态
+  kb ask "C++ 智能指针有哪几种"       基于笔记内容回答问题
   kb pull                              多台电脑同步时拉取最新
 
 典型流程:

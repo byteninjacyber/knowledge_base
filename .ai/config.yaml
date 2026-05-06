@@ -3,6 +3,7 @@ models:
   summarize: nvidia/nemotron-3-super-120b-a12b:free
   tag: nvidia/nemotron-3-super-120b-a12b:free
   link_suggest: nvidia/nemotron-3-super-120b-a12b:free
+  ask: google/gemma-4-31b-it:free
 
 prompts:
   summarize: "为以下笔记生成一句话中文摘要，只返回摘要文本："

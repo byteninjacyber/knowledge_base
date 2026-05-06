@@ -69,7 +69,7 @@ export default {
 3. 回答要简洁、准确、有条理
 4. 如果涉及代码，用 markdown 代码块格式`;
 
-    const aiResp = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+    const aiResp = await fetch("https://models.inference.ai.azure.com/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

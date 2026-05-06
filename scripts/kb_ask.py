@@ -84,31 +84,16 @@ def search_relevant(question: str, notes: List[Tuple[str, str]], top_k: int = 3)
 
 
 def ask_llm(question: str, context: str) -> str:
-    """调用 OpenRouter 免费模型回答问题"""
+    """调用 GitHub Models 回答问题"""
     import urllib.request
-    import yaml
-
-    config_path = ROOT / ".ai" / "config.yaml"
-    if config_path.exists():
-        with open(config_path) as f:
-            config = yaml.safe_load(f)
-        provider = config.get("provider", "openrouter")
-        model = config.get("models", {}).get("ask", config.get("models", {}).get("summarize", "nvidia/llama-3.3-70b-instruct:free"))
-    else:
-        provider = "openrouter"
-        model = "nvidia/llama-3.3-70b-instruct:free"
 
     api_key = os.environ.get("KB_AI_KEY")
     if not api_key:
         print("ERROR: 请设置 KB_AI_KEY 环境变量（在 .env 文件中）", file=sys.stderr)
         sys.exit(1)
 
-    urls = {
-        "openrouter": "https://openrouter.ai/api/v1",
-        "deepseek": "https://api.deepseek.com/v1",
-        "openai": "https://api.openai.com/v1",
-    }
-    base_url = urls.get(provider, urls["openrouter"])
+    model = "gpt-4o-mini"
+    base_url = "https://models.inference.ai.azure.com"
 
     system_prompt = """你是一个知识库问答助手。根据提供的笔记内容回答用户问题。
 规则：

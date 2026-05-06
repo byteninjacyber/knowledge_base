@@ -1,24 +1,8 @@
-# AI 配置
-# 密钥从环境变量读取：KB_AI_KEY
-
-provider: deepseek  # deepseek | claude | openai
+provider: gemini
 models:
-  summarize: deepseek-chat
-  tag: deepseek-chat
-  link_suggest: deepseek-chat
-
-# 可按需切换，例如：
-# provider: openai
-# models:
-#   summarize: gpt-4o
-#   tag: gpt-4o-mini
-#   link_suggest: gpt-4o
-
-# provider: claude
-# models:
-#   summarize: claude-sonnet-4-20250514
-#   tag: claude-haiku-4-20250414
-#   link_suggest: claude-sonnet-4-20250514
+  summarize: gemini-2.0-flash
+  tag: gemini-2.0-flash
+  link_suggest: gemini-2.0-flash
 
 prompts:
   summarize: "为以下笔记生成一句话中文摘要，只返回摘要文本："

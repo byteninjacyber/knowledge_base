@@ -5,6 +5,7 @@ Knowledge Base AI Assistant
 用法: python scripts/ai_organize.py [--file path] [--all-new] [--dry-run]
 """
 
+from __future__ import annotations
 import os
 import sys
 import yaml
@@ -13,6 +14,7 @@ import argparse
 import subprocess
 from pathlib import Path
 from datetime import datetime
+from typing import Tuple, List
 
 ROOT = Path(__file__).resolve().parent.parent
 CONFIG_PATH = ROOT / ".ai" / "config.yaml"
@@ -38,8 +40,8 @@ def get_base_url(provider: str) -> str:
         "deepseek": "https://api.deepseek.com/v1",
         "openai": "https://api.openai.com/v1",
         "claude": "https://api.anthropic.com/v1",
+        "gemini": "https://generativelanguage.googleapis.com/v1beta",
     }
-    # 支持自定义 base_url 环境变量
     custom = os.environ.get("KB_AI_BASE_URL")
     return custom or urls.get(provider, urls["openai"])
 
@@ -51,8 +53,14 @@ def call_llm(provider: str, model: str, prompt: str, content: str, api_key: str)
 
     base_url = get_base_url(provider)
 
-    if provider == "claude":
-        # Anthropic 原生接口
+    if provider == "gemini":
+        url = f"{base_url}/models/{model}:generateContent?key={api_key}"
+        headers = {"Content-Type": "application/json"}
+        data = json.dumps({
+            "contents": [{"parts": [{"text": f"{prompt}\n\n{content}"}]}],
+            "generationConfig": {"temperature": 0.3, "maxOutputTokens": 1024},
+        }).encode()
+    elif provider == "claude":
         url = f"{base_url}/messages"
         headers = {
             "Content-Type": "application/json",
@@ -65,7 +73,6 @@ def call_llm(provider: str, model: str, prompt: str, content: str, api_key: str)
             "messages": [{"role": "user", "content": f"{prompt}\n\n{content}"}],
         }).encode()
     else:
-        # OpenAI 兼容接口 (OpenAI, DeepSeek)
         url = f"{base_url}/chat/completions"
         headers = {
             "Content-Type": "application/json",
@@ -84,7 +91,9 @@ def call_llm(provider: str, model: str, prompt: str, content: str, api_key: str)
     try:
         with urllib.request.urlopen(req, timeout=30) as resp:
             result = json.loads(resp.read())
-            if provider == "claude":
+            if provider == "gemini":
+                return result["candidates"][0]["content"]["parts"][0]["text"].strip()
+            elif provider == "claude":
                 return result["content"][0]["text"].strip()
             else:
                 return result["choices"][0]["message"]["content"].strip()
@@ -93,7 +102,7 @@ def call_llm(provider: str, model: str, prompt: str, content: str, api_key: str)
         return ""
 
 
-def parse_frontmatter(text: str) -> tuple[dict, str]:
+def parse_frontmatter(text: str) -> Tuple[dict, str]:
     """解析 markdown frontmatter"""
     if not text.startswith("---"):
         return {}, text
@@ -111,7 +120,7 @@ def write_frontmatter(meta: dict, body: str) -> str:
     return f"---\n{fm}\n---\n\n{body}\n"
 
 
-def get_new_files() -> list[Path]:
+def get_new_files() -> List[Path]:
     """获取最近 git 变更的 markdown 文件"""
     try:
         result = subprocess.run(
@@ -215,7 +224,7 @@ def main():
 
     files = []
     if args.file:
-        files = [Path(args.file)]
+        files = [Path(args.file).resolve()]
     elif args.all_new:
         files = get_new_files()
     else:

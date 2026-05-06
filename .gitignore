@@ -1,0 +1,8 @@
+node_modules/
+.quartz-cache/
+public/
+.ai/cache/
+.env
+*.log
+.obsidian/workspace.json
+.obsidian/workspaces.json

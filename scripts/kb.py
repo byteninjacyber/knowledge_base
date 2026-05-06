@@ -114,11 +114,19 @@ def cmd_preview(args):
         sys.exit(1)
 
     public_dir = quartz_dir / "public"
-    port = args[0] if args else "9090"
+    port = int(args[0]) if args else 9090
+
+    import socket
+    for p in range(port, port + 10):
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            if s.connect_ex(("localhost", p)) != 0:
+                port = p
+                break
+
     print(f"🌐 预览地址: http://localhost:{port}")
     print("   按 Ctrl+C 停止")
     try:
-        subprocess.run([sys.executable, "-m", "http.server", port], cwd=public_dir)
+        subprocess.run([sys.executable, "-m", "http.server", str(port)], cwd=public_dir)
     except KeyboardInterrupt:
         print("\n已停止")
 

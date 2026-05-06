@@ -35,10 +35,25 @@ document.addEventListener("nav", () => {
   });
   closeBtn.addEventListener("click", () => panel.classList.add("hidden"));
 
+  function mdToHtml(md) {
+    return md
+      .replace(/```([\s\S]*?)```/g, "<pre><code>$1</code></pre>")
+      .replace(/`([^`]+)`/g, "<code>$1</code>")
+      .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+      .replace(/^\d+\.\s+(.+)$/gm, "<li>$1</li>")
+      .replace(/(<li>.*<\/li>)/s, "<ol>$1</ol>")
+      .replace(/^- (.+)$/gm, "<li>$1</li>")
+      .replace(/\n/g, "<br>");
+  }
+
   function addMsg(text, role) {
     const div = document.createElement("div");
     div.className = `kb-chat-msg kb-chat-${role}`;
-    div.textContent = text;
+    if (role === "bot") {
+      div.innerHTML = mdToHtml(text);
+    } else {
+      div.textContent = text;
+    }
     messages.appendChild(div);
     messages.scrollTop = messages.scrollHeight;
   }

@@ -125,8 +125,25 @@ def cmd_preview(args):
 
     print(f"🌐 预览地址: http://localhost:{port}")
     print("   按 Ctrl+C 停止")
+
+    import http.server
+    import functools
+
+    class QuartzHandler(http.server.SimpleHTTPRequestHandler):
+        def __init__(self, *a, **kw):
+            super().__init__(*a, directory=str(public_dir), **kw)
+
+        def do_GET(self):
+            path = self.translate_path(self.path)
+            if not Path(path).exists() and not Path(path).suffix:
+                html_path = path + ".html"
+                if Path(html_path).exists():
+                    self.path = self.path + ".html"
+            super().do_GET()
+
     try:
-        subprocess.run([sys.executable, "-m", "http.server", str(port)], cwd=public_dir)
+        with http.server.HTTPServer(("", port), QuartzHandler) as httpd:
+            httpd.serve_forever()
     except KeyboardInterrupt:
         print("\n已停止")
 

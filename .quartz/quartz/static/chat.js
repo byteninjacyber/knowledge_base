@@ -20,7 +20,7 @@ document.addEventListener("nav", () => {
   `;
   document.body.appendChild(widget);
 
-  const WORKER_URL = "https://kb-ask.byteninjacyber.workers.dev";
+  const WORKER_URL = "https://kb.shuzistore.com";
 
   const toggle = document.getElementById("kb-chat-toggle");
   const panel = document.getElementById("kb-chat-panel");
@@ -51,11 +51,15 @@ document.addEventListener("nav", () => {
     addMsg("思考中...", "loading");
 
     try {
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), 30000);
       const resp = await fetch(WORKER_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ question: q }),
+        signal: ctrl.signal,
       });
+      clearTimeout(timer);
       const data = await resp.json();
       messages.removeChild(messages.lastChild);
       addMsg(data.answer, "bot");
@@ -65,7 +69,11 @@ document.addEventListener("nav", () => {
       }
     } catch (e) {
       messages.removeChild(messages.lastChild);
-      addMsg("连接失败，请检查网络或稍后重试", "bot");
+      if (e.name === "AbortError") {
+        addMsg("请求超时，AI 正在思考中可能较慢，请重试", "bot");
+      } else {
+        addMsg("连接失败，请检查网络或稍后重试", "bot");
+      }
     }
   }
 

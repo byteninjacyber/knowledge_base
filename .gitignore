@@ -6,6 +6,4 @@ public/
 .ai/cache/
 .env
 *.log
-.obsidian/workspace.json
-.obsidian/workspaces.json
-.obsidian/workspace-*.json
+.obsidian/

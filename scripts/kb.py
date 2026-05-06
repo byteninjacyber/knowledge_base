@@ -105,11 +105,20 @@ def cmd_preview(args):
 
     content_dir = KB_DIR / "content"
     npx = "npx.cmd" if sys.platform == "win32" else "npx"
-    print("🌐 启动本地预览: http://localhost:8080")
+
+    print("正在构建...")
+    result = subprocess.run([npx, "quartz", "build", "--directory", str(content_dir)],
+                           cwd=quartz_dir)
+    if result.returncode != 0:
+        print("构建失败")
+        sys.exit(1)
+
+    public_dir = quartz_dir / "public"
+    port = args[0] if args else "9090"
+    print(f"🌐 预览地址: http://localhost:{port}")
     print("   按 Ctrl+C 停止")
     try:
-        subprocess.run([npx, "quartz", "build", "--serve", "--directory", str(content_dir)],
-                       cwd=quartz_dir)
+        subprocess.run([sys.executable, "-m", "http.server", port], cwd=public_dir)
     except KeyboardInterrupt:
         print("\n已停止")
 

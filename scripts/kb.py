@@ -127,16 +127,33 @@ def main():
     }
 
     if len(sys.argv) < 2 or sys.argv[1] not in commands:
-        print("用法: kb <命令>")
-        print()
-        print("  new <标题>     创建新笔记到 inbox")
-        print("  push [消息]    提交并推送到 GitHub")
-        print("  pull           拉取远程更新")
-        print("  preview        本地预览 wiki 站点")
-        print("  ai [文件]      运行 AI 整理")
-        print("  apply          应用所有 AI 建议")
-        print("  status         查看状态")
-        print("  setup          初始化环境（含 Quartz）")
+        print("""用法: kb <命令> [参数]
+
+命令:
+  new <标题>     创建新笔记到 inbox
+  push [消息]    提交并推送到 GitHub
+  pull           拉取远程更新
+  preview        本地预览 wiki 站点
+  ai [文件]      运行 AI 整理
+  apply          应用所有 AI 建议
+  status         查看状态
+  setup          初始化环境（含 Quartz）
+
+示例:
+  kb new "Linux 进程管理"              创建笔记 content/inbox/linux-进程管理.md
+  kb new Docker 容器网络               多个词自动拼接为标题
+  kb push                              提交所有改动并推送
+  kb push "添加 Docker 笔记"           带自定义提交信息
+  kb preview                           本地预览，浏览器打开 http://localhost:8080
+  kb ai content/inbox/linux-进程管理.md AI 整理指定笔记（生成摘要+标签）
+  kb ai                                AI 整理所有最近变更的笔记
+  kb apply                             将 AI 建议写入笔记的 frontmatter
+  kb status                            查看有多少 AI 建议待确认 + git 状态
+  kb pull                              多台电脑同步时拉取最新
+
+典型流程:
+  kb new "学习主题"  →  编辑笔记  →  kb preview  →  kb ai  →  kb apply  →  kb push
+""")
         sys.exit(0)
 
     cmd = sys.argv[1]

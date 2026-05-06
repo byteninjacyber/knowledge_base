@@ -1,5 +1,6 @@
 node_modules/
 .quartz-cache/
+.quartz/
 public/
 .ai/cache/
 .env

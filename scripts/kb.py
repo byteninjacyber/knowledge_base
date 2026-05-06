@@ -87,7 +87,31 @@ def cmd_setup(args):
         ENV_FILE.write_text("KB_AI_KEY=sk-or-v1-你的openrouter-key\n")
         print("已创建 .env 文件，请编辑填入你的 API Key")
 
+    quartz_dir = KB_DIR / ".quartz"
+    if not quartz_dir.exists():
+        print("正在安装 Quartz（本地预览需要）...")
+        subprocess.run(["git", "clone", "--depth", "1",
+                        "https://github.com/jackyzha0/quartz.git", str(quartz_dir)])
+        subprocess.run(["npm", "i"], cwd=quartz_dir)
+
     print("✅ 环境就绪")
+
+
+def cmd_preview(args):
+    quartz_dir = KB_DIR / ".quartz"
+    if not quartz_dir.exists():
+        print("Quartz 未安装，先运行: kb setup")
+        sys.exit(1)
+
+    content_dir = KB_DIR / "content"
+    npx = "npx.cmd" if sys.platform == "win32" else "npx"
+    print("🌐 启动本地预览: http://localhost:8080")
+    print("   按 Ctrl+C 停止")
+    try:
+        subprocess.run([npx, "quartz", "build", "--serve", "--directory", str(content_dir)],
+                       cwd=quartz_dir)
+    except KeyboardInterrupt:
+        print("\n已停止")
 
 
 def main():
@@ -99,6 +123,7 @@ def main():
         "apply": cmd_apply,
         "status": cmd_status,
         "setup": cmd_setup,
+        "preview": cmd_preview,
     }
 
     if len(sys.argv) < 2 or sys.argv[1] not in commands:
@@ -107,10 +132,11 @@ def main():
         print("  new <标题>     创建新笔记到 inbox")
         print("  push [消息]    提交并推送到 GitHub")
         print("  pull           拉取远程更新")
+        print("  preview        本地预览 wiki 站点")
         print("  ai [文件]      运行 AI 整理")
         print("  apply          应用所有 AI 建议")
         print("  status         查看状态")
-        print("  setup          初始化环境")
+        print("  setup          初始化环境（含 Quartz）")
         sys.exit(0)
 
     cmd = sys.argv[1]

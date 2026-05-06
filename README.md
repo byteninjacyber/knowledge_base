@@ -8,9 +8,9 @@ Obsidian + Markdown + Git + Quartz + AI (OpenRouter)
 
 | 系统 | 需要安装 |
 |---|---|
-| **Windows** | [Git](https://git-scm.com/download/win) + [Python3](https://www.python.org/downloads/)（安装时勾选 Add to PATH） |
-| **macOS** | `xcode-select --install`（自带 Git）+ `brew install python` 或去官网装 |
-| **Linux** | `sudo apt install git python3 python3-pip` |
+| **Windows** | [Git](https://git-scm.com/download/win) + [Python3](https://www.python.org/downloads/)（勾选 Add to PATH）+ [Node.js](https://nodejs.org/)（预览用） |
+| **macOS** | `xcode-select --install` + `brew install python node` |
+| **Linux** | `sudo apt install git python3 python3-pip nodejs npm` |
 
 ### 克隆 + 初始化
 
@@ -64,9 +64,10 @@ kb ai
 ```bash
 kb new "Docker 网络原理"        # 创建
 # 用 Obsidian / VS Code / 任何编辑器写笔记
+kb preview                       # 本地预览效果
 kb ai content/inbox/docker-网络原理.md  # AI 整理
 kb apply                         # 应用建议
-kb push "note: docker networking"    # 发布
+kb push "note: docker networking"    # 确认没问题，发布
 ```
 
 ## 配置文件

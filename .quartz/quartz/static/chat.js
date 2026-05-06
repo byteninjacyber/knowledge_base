@@ -20,7 +20,7 @@ document.addEventListener("nav", () => {
   `;
   document.body.appendChild(widget);
 
-  const WORKER_URL = "https://kb-ask.YOUR_CF_SUBDOMAIN.workers.dev";
+  const WORKER_URL = "https://kb-ask.byteninjacyber.workers.dev";
 
   const toggle = document.getElementById("kb-chat-toggle");
   const panel = document.getElementById("kb-chat-panel");

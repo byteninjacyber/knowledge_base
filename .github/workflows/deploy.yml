@@ -1,0 +1,45 @@
+name: Deploy Quartz
+
+on:
+  push:
+    branches: [main]
+    paths: ['content/**']
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Quartz
+        run: |
+          git clone --depth 1 https://github.com/jackyzha0/quartz.git /tmp/quartz
+          cp -r /tmp/quartz/* .
+          cp -r /tmp/quartz/.* . 2>/dev/null || true
+          npm ci
+
+      - name: Build
+        run: npx quartz build --directory content
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: public
+
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4

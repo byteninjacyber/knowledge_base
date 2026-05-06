@@ -1,0 +1,35 @@
+name: AI Organize
+
+on:
+  push:
+    branches: [main]
+    paths: ['content/**']
+  workflow_dispatch:
+
+jobs:
+  organize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install deps
+        run: pip install pyyaml
+
+      - name: Run AI organize
+        env:
+          KB_AI_KEY: ${{ secrets.KB_AI_KEY }}
+        run: python scripts/ai_organize.py --all-new
+
+      - name: Commit suggestions
+        run: |
+          git config user.name "AI Assistant"
+          git config user.email "ai@knowledge-base"
+          git add .ai/suggestions/
+          git diff --cached --quiet || git commit -m "ai: add suggestions for new notes"
+          git push

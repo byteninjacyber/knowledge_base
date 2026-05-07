@@ -174,6 +174,7 @@ def process_file(filepath: Path, config: dict, api_key: str, dry_run: bool = Fal
         return
 
     # 写入 suggestions 目录，等待人工确认
+    SUGGESTIONS_DIR.mkdir(parents=True, exist_ok=True)
     suggestion_file = SUGGESTIONS_DIR / f"{filepath.stem}_{datetime.now().strftime('%Y%m%d%H%M%S')}.json"
     suggestion_file.write_text(json.dumps({
         "file": str(filepath.relative_to(ROOT)),
